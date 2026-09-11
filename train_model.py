@@ -269,15 +269,34 @@ def train_and_select_best(df: pd.DataFrame, target_col: str, test_size: float = 
     best_params = {}
 
     for name, (model, param_grid) in candidates.items():
-        if tune_hyperparams and param_grid:
-            # Small, fast grid so this stays quick enough for a live demo
-            search = GridSearchCV(model, param_grid, cv=3, n_jobs=-1)
-            search.fit(X_train, y_train)
-            fitted_model = search.best_estimator_
-            best_params[name] = search.best_params_
+        use_tuning = tune_hyperparams and param_grid
+
+        # GridSearchCV needs at least `cv` samples in every class. Small or
+        # imbalanced hackathon datasets can have a class with only 1-2 rows,
+        # which makes every fold fail and crashes the whole app. Shrink the
+        # number of folds to fit the smallest class, or skip tuning entirely
+        # if there isn't even enough for 2-fold CV.
+        safe_cv = 3
+        if use_tuning and task_type == "classification":
+            min_class_count = y_train.value_counts().min()
+            safe_cv = min(3, int(min_class_count))
+            if safe_cv < 2:
+                use_tuning = False
+
+        if use_tuning:
+            try:
+                cv_folds = safe_cv if task_type == "classification" else 3
+                search = GridSearchCV(model, param_grid, cv=cv_folds, n_jobs=-1, error_score="raise")
+                search.fit(X_train, y_train)
+                fitted_model = search.best_estimator_
+                best_params[name] = search.best_params_
+            except Exception:
+                # Fall back to an untuned fit rather than crashing the app
+                fitted_model = model.fit(X_train, y_train)
+                best_params[name] = "default (tuning skipped: insufficient data)"
         else:
             fitted_model = model.fit(X_train, y_train)
-            best_params[name] = "default"
+            best_params[name] = "default" if tune_hyperparams else "default"
 
         preds = fitted_model.predict(X_test)
         trained_models[name] = fitted_model
