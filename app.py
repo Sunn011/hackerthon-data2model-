@@ -34,7 +34,7 @@ from image_classify import (
 
 st.set_page_config(page_title="Data2Model — Data-to-Model Platform", layout="wide")
 
-st.title("Data2Model")
+st.title("Data2Model🧠")
 st.caption("Turning limited data into validated, ML-ready data — and finding the best model, automatically.")
 
 # ---------------------------------------------------------------------------
@@ -80,7 +80,7 @@ if data_mode == "Images (classification)":
     # -------------------------------------------------------------------
     # 1b. Data profiling — AI-Readiness Score (image version)
     # -------------------------------------------------------------------
-    st.header("Data profiling — AI-Readiness Score")
+    st.header("Data profiling📈 — AI-Readiness Score🤖")
     img_profile = profile_image_dataset(paths, labels)
 
     score_col, detail_col = st.columns([1, 2])
@@ -178,7 +178,7 @@ if data_mode == "Images (classification)":
 # ---------------------------------------------------------------------------
 # 1. Upload data
 # ---------------------------------------------------------------------------
-st.header("1. Upload your dataset")
+st.header("1. Upload your dataset 📊")
 uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
 
 if uploaded_file is None:
@@ -192,7 +192,7 @@ st.dataframe(df.head())
 # ---------------------------------------------------------------------------
 # 1b. Data Profiling — AI-Readiness Score (raw data, before cleaning)
 # ---------------------------------------------------------------------------
-st.header("Data profiling — AI-Readiness Score")
+st.header("Data profiling📈 — AI-Readiness Score 🤖")
 st.caption("This is calculated on the raw data, before any cleaning happens.")
 
 raw_target_guess = df.columns[-1]
@@ -209,16 +209,16 @@ with detail_col:
 # ---------------------------------------------------------------------------
 # 2. Explore the data (EDA)
 # ---------------------------------------------------------------------------
-st.header("2. Explore the data")
+st.header("2. Explore the data 🧬")
 
 col1, col2 = st.columns(2)
 
 with col1:
-    st.subheader("Missing values")
+    st.subheader("Missing values 🔍")
     st.write(df.isnull().sum())
 
 with col2:
-    st.subheader("Summary statistics")
+    st.subheader("Summary statistics ")
     st.write(df.describe())
 
 numeric_cols = df.select_dtypes(include="number").columns.tolist()
@@ -238,7 +238,7 @@ if numeric_cols:
 # ---------------------------------------------------------------------------
 # 3. Train a model
 # ---------------------------------------------------------------------------
-st.header("3. Data augmentation & balancing")
+st.header("3. Data augmentation⚙️ & balancing ⚖️")
 
 aug_col1, aug_col2, aug_col3 = st.columns(3)
 with aug_col1:
@@ -256,7 +256,7 @@ st.info(
     "measure performance on real data."
 )
 
-st.header("4. Train a model")
+st.header("4. Train a model 🤖")
 
 target_col = st.selectbox("Select the target column (what you want to predict)", df.columns)
 
