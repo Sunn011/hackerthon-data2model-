@@ -8,6 +8,5 @@ seaborn
 openai
 imbalanced-learn
 scipy
-torch
-torchvision
+scikit-image
 pillow
